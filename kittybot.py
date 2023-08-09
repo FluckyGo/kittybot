@@ -13,6 +13,13 @@ URL = 'https://api.thecatapi.com/v1/images/search'
 
 
 def get_random_cat_image():
+    try:
+        response = requests.get(URL)
+    except Exception as error:
+        print(error)
+        new_url = 'https://api.thedogapi.com/v1/images/search'
+        response = requests.get(new_url)
+
     response = requests.get(URL).json()
     random_cat = response[0].get('url')
     return random_cat
