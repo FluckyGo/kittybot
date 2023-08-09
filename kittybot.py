@@ -1,4 +1,4 @@
-from telegram import Bot
+from telegram import Bot, ReplyKeyboardMarkup
 from telegram.ext import Updater, Filters, MessageHandler, CommandHandler
 
 
@@ -16,8 +16,10 @@ def say_hi(update, context):
 def wake_up(update, context):
     chat = update.effective_chat
     name = update.effective_chat.first_name
+    button = ReplyKeyboardMarkup([['Показать фото котика']])
     context.bot.send_message(
-        chat_id=chat.id, text='Спасибо, что включили меня {}!'.format(name)
+        chat_id=chat.id, text='Спасибо, что включили меня {}!'.format(name),
+        reply_markup=button
     )
 
 
