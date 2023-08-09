@@ -19,7 +19,7 @@ def get_random_cat_image():
         new_url = 'https://api.thedogapi.com/v1/images/search'
         response = requests.get(new_url)
 
-    response = requests.get(URL).json()
+    response = response.json()
     random_cat = response[0].get('url')
     return random_cat
 
