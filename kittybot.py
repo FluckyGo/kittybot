@@ -8,7 +8,6 @@ from telegram.ext import Updater, CommandHandler
 load_dotenv()
 
 secret_token = os.getenv('BOT_TOKEN')
-updater = Updater(token=secret_token)
 URL = 'https://api.thecatapi.com/v1/images/search'
 
 
@@ -42,7 +41,16 @@ def wake_up(update, context):
     context.bot.send_photo(chat_id=chat.id, photo=get_random_cat_image())
 
 
-updater.dispatcher.add_handler(CommandHandler('start', wake_up))
-updater.dispatcher.add_handler(CommandHandler('newcat', new_cat))
-updater.start_polling(poll_interval=10.0)
-updater.idle()
+def main():
+    updater = Updater(token=secret_token)
+
+    updater.dispatcher.add_handler(CommandHandler('start', wake_up))
+    updater.dispatcher.add_handler(CommandHandler('newcat', new_cat))
+
+    updater.start_polling(poll_interval=10.0)
+
+    updater.idle()
+
+
+if __name__ == '__main__':
+    main()
