@@ -1,26 +1,41 @@
+import os
+import requests
+
+from dotenv import load_dotenv
 from telegram import ReplyKeyboardMarkup
-from telegram.ext import Updater, Filters, MessageHandler, CommandHandler
-from config import BOT_TOKEN
+from telegram.ext import Updater, CommandHandler
 
-updater = Updater(token=BOT_TOKEN)
+load_dotenv()
+
+secret_token = os.getenv('BOT_TOKEN')
+updater = Updater(token=secret_token)
+URL = 'https://api.thecatapi.com/v1/images/search'
 
 
-def say_hi(update, context):
+def get_random_cat_image():
+    response = requests.get(URL).json()
+    random_cat = response[0].get('url')
+    return random_cat
+
+
+def new_cat(update, context):
     chat = update.effective_chat
-    context.bot.send_message(chat_id=chat.id, text='Привет, я KittyBot!')
+    context.bot.send_photo(chat_id=chat.id, photo=get_random_cat_image())
 
 
 def wake_up(update, context):
     chat = update.effective_chat
     name = update.effective_chat.first_name
-    button = ReplyKeyboardMarkup([['Показать фото котика']])
+    button = ReplyKeyboardMarkup([['/newcat']], resize_keyboard=True)
     context.bot.send_message(
-        chat_id=chat.id, text='Спасибо, что включили меня {}!'.format(name),
+        chat_id=chat.id,
+        text='Привет, {}. Посмотри, какого котика я тебе нашёл'.format(name),
         reply_markup=button
     )
+    context.bot.send_photo(chat_id=chat.id, photo=get_random_cat_image())
 
 
 updater.dispatcher.add_handler(CommandHandler('start', wake_up))
-updater.dispatcher.add_handler(MessageHandler(Filters.text, say_hi))
-updater.start_polling(poll_interval=20.0)
+updater.dispatcher.add_handler(CommandHandler('newcat', new_cat))
+updater.start_polling(poll_interval=10.0)
 updater.idle()
